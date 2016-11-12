@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Stack struct {
 	top  *Node
@@ -50,20 +53,19 @@ func printStack(s *Stack) {
 
 func main() {
 	myStack := new(Stack)
-	push(myStack, 7)
+	const max int = 16 * 1024 * 1024 + 2
+	start := time.Now()
+	for i := 0; i < max; i++ {
+		push(myStack, i)
+	}
+	end := time.Now()
 	printStack(myStack)
-	push(myStack, 5)
+	fmt.Printf("Time taken to store %d elements: %v\n", max, end.Sub(start))
+	start = time.Now()
+	for i := 0; i < max / 2; i++ {
+		pop(myStack)
+	}
+	end = time.Now()
 	printStack(myStack)
-	push(myStack, 99)
-	printStack(myStack)
-	pop(myStack)
-	printStack(myStack)
-	pop(myStack)
-	printStack(myStack)
-	pop(myStack)
-	printStack(myStack)
-	pop(myStack)
-	printStack(myStack)
-	push(myStack, 99)
-	printStack(myStack)
+	fmt.Printf("Time taken to remove %d elements: %v", max / 2, end.Sub(start))
 }
