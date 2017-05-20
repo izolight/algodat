@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	fmt.Println("Start Functional Test of stack")
+	fmt.Println("Start Performance Test of stack")
 	myStack := new(stack.Stack)
 	const max int = 16 * 1024 * 1024 + 2
 	start := time.Now()
