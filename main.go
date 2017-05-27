@@ -2,14 +2,25 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"gitea.izolight.xyz/gabor/algodat/datastructures"
+	"github.com/gorilla/mux"
 )
 
 var stack = datastructures.NewStack(20)
+var templates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/viewstack.html"))
+
+type viewData struct {
+	Title string
+	Data  interface{}
+}
+type stackData struct {
+	Position int
+	Value    int
+}
 
 func main() {
 	stack.Push(1)
@@ -33,19 +44,23 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func ViewStack(w http.ResponseWriter, r *http.Request) {
 	element, err := stack.Top()
 	if err != nil {
-		return
+		fmt.Fprintf(w, "Could not get top of stack: %v", err)
 	}
-	s := stack.Size -1
-	fmt.Fprint(w, "<table><caption>Stack</caption><tr><th>Position</th><th>Value</th><tr>")
+	var values []stackData
+	s := stack.Size - 1
 	for {
-		fmt.Fprintf(w, "<tr><td>%d</td><td>%d</td></tr>", s, element.Value)
+		values = append(values, stackData{s, element.Value})
 		element, err = element.Next()
 		if err != nil {
 			break
 		}
 		s--
 	}
-	fmt.Fprint(w, "</table>")
+	data := viewData{"Stack", values}
+	err = templates.ExecuteTemplate(w, "viewstack", data)
+	if err != nil {
+		fmt.Fprintf(w, "Could not render template: %v", err)
+	}
 }
 
 func ViewQueue(w http.ResponseWriter, r *http.Request) {

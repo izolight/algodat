@@ -1,4 +1,4 @@
-package graph
+package datastructures
 
 type Graph struct {
 	vertices []int

@@ -1,0 +1,19 @@
+{{ define "viewstack" }}
+{{ template "header" . }}
+
+<table>
+    <caption>{{ .Title }}</caption>
+    <tr>
+        <th>Position</th>
+        <th>Value</th>
+    </tr>
+    {{ range .Data }}
+        <tr>
+            <td>{{ .Position }}</td>
+            <td>{{ .Value }}</td>
+        </tr>
+    {{ end }}
+</table>
+
+{{ template "footer" . }}
+{{ end }}
