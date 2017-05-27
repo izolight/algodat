@@ -12,7 +12,7 @@ func main() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", Index)
 	r.HandleFunc("/stack", ViewStack)
-	r.HandleFunc("queue", queue)
+	r.HandleFunc("queue", ViewQueue)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
@@ -24,5 +24,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewStack(w http.ResponseWriter, r *http.Request) {
-	stack := new(Stack)
+	//stack := new(Stack)
+}
+
+func ViewQueue(w http.ResponseWriter, r *http.Request) {
+
 }
