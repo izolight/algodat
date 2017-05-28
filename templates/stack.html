@@ -11,7 +11,7 @@
         <th>Position</th>
         <th>Value</th>
     </tr>
-    {{ range $position, $element := .Data }}
+    {{ range $position, $element := .Data.Elements }}
         <tr>
             <td>{{ $position }}</td>
             <td>{{ $element }}</td>
@@ -19,6 +19,9 @@
     {{ end }}
 </table>
 <br>
+{{ if .Data.Peek }}
+<p>The top element is {{ .Data.Peek }}</p>
+{{ end }}
 <form action="/stack/push" method="post">
     <input type="number" name="new"><button type="submit" value="Push">Push</button>
 </form>

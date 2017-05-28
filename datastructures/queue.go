@@ -15,6 +15,11 @@ type Queue struct {
 	elements      []int
 }
 
+type queueData struct {
+	Elements []int
+	Peek     string
+}
+
 // NewQueue returns a queue with the specified maxSize
 func NewQueue(maxSize int) *Queue {
 	return &Queue{0, maxSize, nil}
@@ -24,7 +29,7 @@ func (q *Queue) enqueue(val int) error {
 	if q.isFull() {
 		return fmt.Errorf("Can't enqueue to full queue. Size: %d", q.size)
 	}
-	q.elements = append([]int{val}, q.elements...)
+	q.elements = append(q.elements, val)
 	q.size++
 	return nil
 }
@@ -33,7 +38,7 @@ func (q *Queue) dequeue() error {
 	if q.isEmpty() {
 		return fmt.Errorf("Cant't dequeue from empty queue")
 	}
-	q.elements = q.elements[:len(q.elements)-1]
+	q.elements = q.elements[1:]
 	q.size--
 	return nil
 }
@@ -42,7 +47,7 @@ func (q *Queue) peek() (int, error) {
 	if q.isEmpty() {
 		return 0, fmt.Errorf("Cant't peek into empty queue")
 	}
-	return q.elements[len(q.elements)-1], nil
+	return q.elements[0], nil
 }
 
 func (q *Queue) isFull() bool {
@@ -61,8 +66,15 @@ func (q *Queue) isEmpty() bool {
 
 // View displays all values in the queue
 func (q *Queue) View(w http.ResponseWriter, r *http.Request) {
-	data := viewData{"Queue", q.elements, errors}
-	err := queueTemplates.ExecuteTemplate(w, "queue", data)
+	data := queueData{q.elements, ""}
+	peek, err := q.peek()
+	if err != nil {
+		errors = append(errors, fmt.Sprintf("%v", err))
+	} else {
+		data.Peek = fmt.Sprintf("%d at position %d", peek, 0)
+	}
+	view := viewData{"Queue", data, errors}
+	err = queueTemplates.ExecuteTemplate(w, "queue", view)
 	if err != nil {
 		fmt.Fprintf(w, "Could not render template: %v", err)
 	}

@@ -65,8 +65,15 @@ func (s *Stack) peek() (int, error) {
 
 // View displays all values on the stack
 func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
-	data := viewData{"Stack", s.elements, errors}
-	err := stackTemplates.ExecuteTemplate(w, "stack", data)
+	data := queueData{s.elements, ""}
+	peek, err := s.peek()
+	if err != nil {
+		errors = append(errors, fmt.Sprintf("%v", err))
+	} else {
+		data.Peek = fmt.Sprintf("%d at position %d", peek, s.size-1)
+	}
+	view := viewData{"Stack", data, errors}
+	err = stackTemplates.ExecuteTemplate(w, "stack", view)
 	if err != nil {
 		fmt.Fprintf(w, "Could not render template: %v", err)
 	}
