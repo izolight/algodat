@@ -16,7 +16,7 @@ func NewQueue(maxSize int) *Queue {
 
 func (q *Queue) enqueue(val int) error {
 	if q.isFull() {
-		return fmt.Errorf("Can't enqueue to full queue")
+		return fmt.Errorf("Can't enqueue to full queue. Size: %d", q.size)
 	}
 	q.elements = append([]int{val}, q.elements...)
 	q.size++
