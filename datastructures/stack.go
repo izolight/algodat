@@ -73,32 +73,32 @@ func (s *Stack) peek() (int, error) {
 // View displays all values on the stack
 func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
 	data := viewData{"Stack", s.elements, errors}
-	err := stackTemplates.ExecuteTemplate(w, "viewstack", data)
+	err := stackTemplates.ExecuteTemplate(w, "stack", data)
 	if err != nil {
 		fmt.Fprintf(w, "Could not render template: %v", err)
 	}
 	errors = errors[:0]
 }
 
-// Add takes a value from a form and pushes it on the stack
-func (s *Stack) Add(w http.ResponseWriter, r *http.Request) {
+// Push takes a value from a form and pushes it on the stack
+func (s *Stack) Push(w http.ResponseWriter, r *http.Request) {
 	new, err := strconv.Atoi(r.FormValue("new"))
 	if err != nil {
 		errors = append(errors, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
 		err = s.push(new)
 		if err != nil {
-			errors = append(errors, fmt.Sprintf("Could not push to stack: %v", err))
+			errors = append(errors, fmt.Sprintf("%v", err))
 		}
 	}
 	http.Redirect(w, r, "/stack", http.StatusSeeOther)
 }
 
-// Remove pops the top value from the stack
-func (s *Stack) Remove(w http.ResponseWriter, r *http.Request) {
+// Pop pops the top value from the stack
+func (s *Stack) Pop(w http.ResponseWriter, r *http.Request) {
 	err := s.pop()
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("Could not pop from stack: %v", err))
+		errors = append(errors, fmt.Sprintf("%v", err))
 	}
 	http.Redirect(w, r, "/stack", http.StatusSeeOther)
 }

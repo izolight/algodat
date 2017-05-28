@@ -9,15 +9,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var stack = datastructures.NewStack(20)
+var stack = datastructures.NewStack(10)
+var queue = datastructures.NewQueue(10)
 
 func main() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", Index)
 	r.HandleFunc("/stack", stack.View).Methods("GET")
-	r.HandleFunc("/stack/push", stack.Add).Methods("POST")
-	r.HandleFunc("/stack/pop", stack.Remove).Methods("POST")
-	r.HandleFunc("queue", ViewQueue)
+	r.HandleFunc("/stack/push", stack.Push).Methods("POST")
+	r.HandleFunc("/stack/pop", stack.Pop).Methods("POST")
+	r.HandleFunc("/queue", queue.View).Methods("GET")
+	r.HandleFunc("/queue/enqueue", queue.Enqueue).Methods("POST")
+	r.HandleFunc("/queue/dequeue", queue.Dequeue).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
