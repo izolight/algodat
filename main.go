@@ -12,10 +12,6 @@ import (
 var stack = datastructures.NewStack(20)
 
 func main() {
-	stack.Push(1)
-	stack.Push(9)
-	stack.Push(-3)
-	stack.Push(5)
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", Index)
 	r.HandleFunc("/stack", stack.View).Methods("GET")
