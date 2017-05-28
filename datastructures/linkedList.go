@@ -167,6 +167,7 @@ func (l *LinkedList) DeleteFromEnd(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
 
+// Search searches the form value and returns the address of it
 func (l *LinkedList) Search(w http.ResponseWriter, r *http.Request) {
 	search, err := strconv.Atoi(r.FormValue("search"))
 	if err != nil {
@@ -183,6 +184,7 @@ func (l *LinkedList) Search(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
 
+// Delete searches for the form value and deletes it if found
 func (l *LinkedList) Delete(w http.ResponseWriter, r *http.Request) {
 	delete, err := strconv.Atoi(r.FormValue("delete"))
 	if err != nil {
