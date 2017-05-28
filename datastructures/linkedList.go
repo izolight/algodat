@@ -13,6 +13,7 @@ var linkedListTemplates = template.Must(template.ParseFiles("templates/header.ht
 type LinkedList struct {
 	head     *Node
 	messages []string
+	errors   []string
 }
 
 // Node is a representation of a node in a linked list
@@ -28,7 +29,7 @@ type linkedListData struct {
 
 // NewLinkedList returns an empty LinkedList
 func NewLinkedList() *LinkedList {
-	return &LinkedList{nil, nil}
+	return &LinkedList{nil, nil, nil}
 }
 
 func (l *LinkedList) insertAtFront(val int) error {
@@ -51,28 +52,31 @@ func (l *LinkedList) insertAtEnd(val int) error {
 	return nil
 }
 
-func (l *LinkedList) deleteFromFront() error {
+func (l *LinkedList) deleteFromFront() (*Node, error) {
 	if l.head == nil {
-		return fmt.Errorf("Can't delete from empty list")
+		return nil, fmt.Errorf("Can't delete from empty list")
 	}
+	deleted := l.head
 	l.head = l.head.next
-	return nil
+	return deleted, nil
 }
 
-func (l *LinkedList) deleteFromEnd() error {
+func (l *LinkedList) deleteFromEnd() (*Node, error) {
 	if l.head == nil {
-		return fmt.Errorf("Can't delete from empty list")
+		return nil, fmt.Errorf("Can't delete from empty list")
 	}
 	if l.head.next == nil {
+		deleted := l.head
 		l.head = nil
-		return nil
+		return deleted, nil
 	}
 	previous := l.head
 	for previous.next.next != nil {
 		previous = previous.next
 	}
+	deleted := previous.next
 	previous.next = nil
-	return nil
+	return deleted, nil
 }
 
 func (l *LinkedList) search(val int) (*Node, error) {
@@ -86,23 +90,25 @@ func (l *LinkedList) search(val int) (*Node, error) {
 	return nil, fmt.Errorf("Can't find %d in list", val)
 }
 
-func (l *LinkedList) delete(val int) error {
+func (l *LinkedList) delete(val int) (*Node, error) {
 	if l.head == nil {
-		return fmt.Errorf("Can't find %d in list", val)
+		return nil, fmt.Errorf("Can't find %d in list", val)
 	}
 	if l.head.value == val {
+		deleted := l.head
 		l.head = l.head.next
-		return nil
+		return deleted, nil
 	}
 	node := l.head
 	for node.next != nil {
 		if node.next.value == val {
+			deleted := node.next
 			node.next = node.next.next
-			return nil
+			return deleted, nil
 		}
 		node = node.next
 	}
-	return fmt.Errorf("Can't find %d in list", val)
+	return nil, fmt.Errorf("Can't find %d in list", val)
 }
 
 // View displays all values in the linked list
@@ -113,23 +119,26 @@ func (l *LinkedList) View(w http.ResponseWriter, r *http.Request) {
 		data = append(data, linkedListData{fmt.Sprintf("%p", node), fmt.Sprintf("%p", node.next), node.value})
 		node = node.next
 	}
-	view := viewData{"Linked List", data, l.messages}
+	view := viewData{"Linked List", data, l.messages, l.errors}
 	err := linkedListTemplates.ExecuteTemplate(w, "linkedlist", view)
 	if err != nil {
 		fmt.Fprintf(w, "Could not render template: %v", err)
 	}
 	l.messages = l.messages[:0]
+	l.errors = l.errors[:0]
 }
 
 // InsertAtFront inserts the form value at the front of the linked list
 func (l *LinkedList) InsertAtFront(w http.ResponseWriter, r *http.Request) {
 	new, err := strconv.Atoi(r.FormValue("new"))
 	if err != nil {
-		l.messages = append(l.messages, fmt.Sprintf("Could not parse form value: %v", err))
+		l.errors = append(l.errors, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
 		err = l.insertAtFront(new)
 		if err != nil {
-			l.messages = append(l.messages, fmt.Sprintf("%v", err))
+			l.errors = append(l.errors, fmt.Sprintf("%v", err))
+		} else {
+			l.messages = append(l.messages, fmt.Sprintf("Inserted %d at front", new))
 		}
 	}
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
@@ -139,11 +148,13 @@ func (l *LinkedList) InsertAtFront(w http.ResponseWriter, r *http.Request) {
 func (l *LinkedList) InsertAtEnd(w http.ResponseWriter, r *http.Request) {
 	new, err := strconv.Atoi(r.FormValue("new"))
 	if err != nil {
-		l.messages = append(l.messages, fmt.Sprintf("Could not parse form value: %v", err))
+		l.errors = append(l.errors, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
 		err = l.insertAtEnd(new)
 		if err != nil {
-			l.messages = append(l.messages, fmt.Sprintf("%v", err))
+			l.errors = append(l.errors, fmt.Sprintf("%v", err))
+		} else {
+			l.messages = append(l.messages, fmt.Sprintf("Inserted %d at end", new))
 		}
 	}
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
@@ -151,18 +162,22 @@ func (l *LinkedList) InsertAtEnd(w http.ResponseWriter, r *http.Request) {
 
 // DeleteFromFront deletes the first node of the linked list
 func (l *LinkedList) DeleteFromFront(w http.ResponseWriter, r *http.Request) {
-	err := l.deleteFromFront()
+	deleted, err := l.deleteFromFront()
 	if err != nil {
-		l.messages = append(l.messages, fmt.Sprintf("%v", err))
+		l.errors = append(l.errors, fmt.Sprintf("%v", err))
+	} else {
+		l.messages = append(l.messages, fmt.Sprintf("Deleted %d with address %p at front", deleted.value, deleted))
 	}
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
 
 // DeleteFromEnd deletes the last node of the linked list
 func (l *LinkedList) DeleteFromEnd(w http.ResponseWriter, r *http.Request) {
-	err := l.deleteFromEnd()
+	deleted, err := l.deleteFromEnd()
 	if err != nil {
-		l.messages = append(l.messages, fmt.Sprintf("%v", err))
+		l.errors = append(l.errors, fmt.Sprintf("%v", err))
+	} else {
+		l.messages = append(l.messages, fmt.Sprintf("Deleted %d at wit address %p at end", deleted.value, deleted))
 	}
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
@@ -171,13 +186,12 @@ func (l *LinkedList) DeleteFromEnd(w http.ResponseWriter, r *http.Request) {
 func (l *LinkedList) Search(w http.ResponseWriter, r *http.Request) {
 	search, err := strconv.Atoi(r.FormValue("search"))
 	if err != nil {
-		l.messages = append(l.messages, fmt.Sprintf("Could not parse form value: %v", err))
+		l.errors = append(l.errors, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
 		node, err := l.search(search)
 		if err != nil {
-			l.messages = append(l.messages, fmt.Sprintf("%v", err))
-		}
-		if node != nil {
+			l.errors = append(l.errors, fmt.Sprintf("%v", err))
+		} else {
 			l.messages = append(l.messages, fmt.Sprintf("%d found at address %p", search, node))
 		}
 	}
@@ -188,11 +202,13 @@ func (l *LinkedList) Search(w http.ResponseWriter, r *http.Request) {
 func (l *LinkedList) Delete(w http.ResponseWriter, r *http.Request) {
 	delete, err := strconv.Atoi(r.FormValue("delete"))
 	if err != nil {
-		l.messages = append(l.messages, fmt.Sprintf("Could not parse form value: %v", err))
+		l.errors = append(l.errors, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
-		err = l.delete(delete)
+		deleted, err := l.delete(delete)
 		if err != nil {
-			l.messages = append(l.messages, fmt.Sprintf("%v", err))
+			l.errors = append(l.errors, fmt.Sprintf("%v", err))
+		} else {
+			l.messages = append(l.messages, fmt.Sprintf("Deleted %d at address %p", deleted.value, deleted))
 		}
 	}
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)

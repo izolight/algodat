@@ -11,6 +11,9 @@
         <div class="container">
         <a href="/">All datastructures</a><br><br>
         {{ range .Messages }}
-            {{ . }} <br>
+            <p class="bg-info">{{ . }}</p>
+        {{ end }}
+        {{ range .Errors }}
+            <p class="bg-danger">{{ . }}</p>
         {{ end }}
 {{ end }}
