@@ -9,11 +9,13 @@ import (
 
 var queueTemplates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/queue.html"))
 
+// Queue represents the queue datastructure
 type Queue struct {
 	size, maxSize int
 	elements      []int
 }
 
+// NewQueue returns a queue with the specified maxSize
 func NewQueue(maxSize int) *Queue {
 	return &Queue{0, maxSize, nil}
 }

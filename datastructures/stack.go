@@ -8,13 +8,6 @@ import (
 )
 
 var stackTemplates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/stack.html"))
-var errors []string
-
-type viewData struct {
-	Title  string
-	Data   interface{}
-	Errors []string
-}
 
 // Stack has the a pointer to the top element in the Stack, the current size and the maximum allowed size
 type Stack struct {
