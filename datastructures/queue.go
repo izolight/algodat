@@ -1,7 +1,11 @@
 package datastructures
 
-import "html/template"
-import "fmt"
+import (
+	"fmt"
+	"html/template"
+	"net/http"
+	"strconv"
+)
 
 var queueTemplates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/queue.html"))
 
@@ -51,4 +55,37 @@ func (q *Queue) isEmpty() bool {
 		return true
 	}
 	return false
+}
+
+// View displays all values in the queue
+func (q *Queue) View(w http.ResponseWriter, r *http.Request) {
+	data := viewData{"Queue", q.elements, errors}
+	err := queueTemplates.ExecuteTemplate(w, "queue", data)
+	if err != nil {
+		fmt.Fprintf(w, "Could not render template: %v", err)
+	}
+	errors = errors[:0]
+}
+
+// Enqueue takes the form value and enqueues it
+func (q *Queue) Enqueue(w http.ResponseWriter, r *http.Request) {
+	new, err := strconv.Atoi(r.FormValue("new"))
+	if err != nil {
+		errors = append(errors, fmt.Sprintf("Could not parse form value: %v", err))
+	} else {
+		err = q.enqueue(new)
+		if err != nil {
+			errors = append(errors, fmt.Sprintf("%v", err))
+		}
+	}
+	http.Redirect(w, r, "/queue", http.StatusSeeOther)
+}
+
+// Dequeue dequeues from the queue
+func (q *Queue) Dequeue(w http.ResponseWriter, r *http.Request) {
+	err := q.dequeue()
+	if err != nil {
+		errors = append(errors, fmt.Sprintf("%v", err))
+	}
+	http.Redirect(w, r, "/queue", http.StatusSeeOther)
 }

@@ -1,0 +1,29 @@
+{{ define "queue" }}
+{{ template "header" . }}
+
+{{ range .Errors }}
+    {{ . }} <br>
+{{ end }}
+
+<table>
+    <caption>{{ .Title }}</caption>
+    <tr>
+        <th>Position</th>
+        <th>Value</th>
+    </tr>
+    {{ range $position, $element := .Data }}
+        <tr>
+            <td>{{ $position }}</td>
+            <td>{{ $element }}</td>
+        </tr>
+    {{ end }}
+</table>
+<br>
+<form action="/queue/enqueue" method="post">
+    <input type="number" name="new"><button type="submit" value="Push">Enqueue</button>
+</form>
+<form action="/queue/dequeue" method="post">
+    <button type="submit" value="Pop">Dequeue</button>
+</form>
+{{ template "footer" . }}
+{{ end }}
