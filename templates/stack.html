@@ -11,10 +11,10 @@
         <th>Position</th>
         <th>Value</th>
     </tr>
-    {{ range .Data }}
+    {{ range $position, $element := .Data }}
         <tr>
-            <td>{{ .Position }}</td>
-            <td>{{ .Value }}</td>
+            <td>{{ $position }}</td>
+            <td>{{ $element }}</td>
         </tr>
     {{ end }}
 </table>
