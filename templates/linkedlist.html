@@ -1,0 +1,39 @@
+{{ define "linkedlist" }}
+{{ template "header" . }}
+
+{{ range .Errors }}
+    {{ . }} <br>
+{{ end }}
+
+<table>
+    <caption>{{ .Title }}</caption>
+    <tr>
+        <th>Position</th>        
+        <th>Value</th>
+        <th>Address</th>
+        <th>Next</th>
+    </tr>
+    {{ range $position, $data := .Data }}
+        <tr>
+            <td>{{ $position }}</td>            
+            <td>{{ $data.Value }}</td>
+            <td>{{ $data.Address }}</td>
+            <td>{{ $data.Next }}
+        </tr>
+    {{ end }}
+</table>
+<br>
+<form action="/linkedlist/insertAtFront" method="post">
+    <input type="number" name="new"><button type="submit" value="insertAtFront">Insert at Front</button>
+</form>
+<form action="/linkedlist/insertAtEnd" method="post">
+    <input type="number" name="new"><button type="submit" value="insertAtEnd">Insert at End</button>
+</form>
+<form action="/linkedlist/deleteFromFront" method="post">
+    <button type="submit" value="deleteFromFront">Delete from Front</button>
+</form>
+<form action="/linkedlist/deleteFromEnd" method="post">
+    <button type="submit" value="deleteFromEnd">Delete from End</button>
+</form>
+{{ template "footer" . }}
+{{ end }}
