@@ -1,6 +1,6 @@
 {{ define "linkedlist" }}
 {{ template "header" . }}
-<table>
+<table class="table">
     <caption>{{ .Title }}</caption>
     <tr>
         <th>Position</th>        
@@ -18,23 +18,40 @@
     {{ end }}
 </table>
 <br>
-<form action="/linkedlist/insertAtFront" method="post">
-    <input type="number" name="new"><button type="submit" value="insertAtFront">Insert at Front</button>
+<form action="/linkedlist/insertAtFront" method="post" class="form-inline">
+    <div class="form-group">
+        <input type="number" name="new" class="form-control">
+    </div>
+    <button type="submit" value="insertAtFront" class="btn btn-success">Insert at Front</button>
 </form>
-<form action="/linkedlist/insertAtEnd" method="post">
-    <input type="number" name="new"><button type="submit" value="insertAtEnd">Insert at End</button>
+<br>
+<form action="/linkedlist/insertAtEnd" method="post" class="form-inline">
+    <div class="form-group">
+        <input type="number" name="new" class="form-control">
+    </div>
+    <button type="submit" value="insertAtEnd" class="btn btn-success">Insert at End</button>
 </form>
-<form action="/linkedlist/deleteFromFront" method="post">
-    <button type="submit" value="deleteFromFront">Delete from Front</button>
+<br>
+<form action="/linkedlist/deleteFromFront" method="post" class="form-inline">
+    <button type="submit" value="deleteFromFront" class="btn btn-danger">Delete from Front</button>
 </form>
-<form action="/linkedlist/deleteFromEnd" method="post">
-    <button type="submit" value="deleteFromEnd">Delete from End</button>
+<br>
+<form action="/linkedlist/deleteFromEnd" method="post" class="form-inline">
+    <button type="submit" value="deleteFromEnd" class="btn btn-danger">Delete from End</button>
 </form>
-<form action="/linkedlist/search" method="post">
-    <input type="number" name="search"><button type="submit" value="search">Search</button>
+<br>
+<form action="/linkedlist/search" method="post" class="form-inline">
+    <div class="form-group">    
+        <input type="number" name="search" class="form-control">
+    </div>
+    <button type="submit" value="search" class="btn btn-info">Search</button>
 </form>
-<form action="/linkedlist/delete" method="post">
-    <input type="number" name="delete"><button type="submit" value="delete">Delete</button>
+<br>
+<form action="/linkedlist/delete" method="post" class="form-inline">
+    <div class="form-group">
+        <input type="number" name="delete" class="form-control">
+    </div>
+    <button type="submit" value="delete" class="btn btn-danger">Delete</button>
 </form>
 {{ template "footer" . }}
 {{ end }}

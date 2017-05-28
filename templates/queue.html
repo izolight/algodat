@@ -1,6 +1,6 @@
 {{ define "queue" }}
 {{ template "header" . }}
-<table>
+<table class="table">
     <caption>{{ .Title }}</caption>
     <tr>
         <th>Position</th>
@@ -17,11 +17,15 @@
 {{ if .Data.Peek }}
 <p>The head element is {{ .Data.Peek }}</p>
 {{ end }}
-<form action="/queue/enqueue" method="post">
-    <input type="number" name="new"><button type="submit" value="Push">Enqueue</button>
+<form action="/queue/enqueue" method="post" class="form-inline">
+    <div class="form-group">
+        <input type="number" name="new" class="form-control">
+    </div>
+    <button type="submit" value="Push" class="btn btn-success">Enqueue</button>
 </form>
-<form action="/queue/dequeue" method="post">
-    <button type="submit" value="Pop">Dequeue</button>
+<br>
+<form action="/queue/dequeue" method="post" class="form-inline">
+    <button type="submit" value="Pop" class="btn btn-danger">Dequeue</button>
 </form>
 {{ template "footer" . }}
 {{ end }}
