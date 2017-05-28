@@ -27,6 +27,8 @@ func main() {
 	r.HandleFunc("/linkedlist/insertAtEnd", linkedList.InsertAtEnd).Methods("POST")
 	r.HandleFunc("/linkedlist/deleteFromFront", linkedList.DeleteFromFront).Methods("POST")
 	r.HandleFunc("/linkedlist/deleteFromEnd", linkedList.DeleteFromEnd).Methods("POST")
+	r.HandleFunc("/linkedlist/search", linkedList.Search).Methods("POST")
+	r.HandleFunc("/linkedlist/delete", linkedList.Delete).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 

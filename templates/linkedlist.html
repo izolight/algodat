@@ -35,5 +35,11 @@
 <form action="/linkedlist/deleteFromEnd" method="post">
     <button type="submit" value="deleteFromEnd">Delete from End</button>
 </form>
+<form action="/linkedlist/search" method="post">
+    <input type="number" name="search"><button type="submit" value="search">Search</button>
+</form>
+<form action="/linkedlist/delete" method="post">
+    <input type="number" name="delete"><button type="submit" value="delete">Delete</button>
+</form>
 {{ template "footer" . }}
 {{ end }}

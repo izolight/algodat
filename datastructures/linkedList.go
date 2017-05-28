@@ -9,20 +9,23 @@ import (
 
 var linkedListTemplates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/linkedlist.html"))
 
+// LinkedList represents the linked list datastructure
 type LinkedList struct {
 	head *Node
 }
 
+// Node is a representation of a node in a linked list
 type Node struct {
 	value int
 	next  *Node
 }
 
-type LinkedListData struct {
+type linkedListData struct {
 	Address, Next string
 	Value         int
 }
 
+// NewLinkedList returns an empty LinkedList
 func NewLinkedList() *LinkedList {
 	return &LinkedList{nil}
 }
@@ -71,20 +74,42 @@ func (l *LinkedList) deleteFromEnd() error {
 	return nil
 }
 
-func (l *LinkedList) search(val int) (bool, error) {
-
-	return false, nil
+func (l *LinkedList) search(val int) (*Node, error) {
+	node := l.head
+	for node != nil {
+		if node.value == val {
+			return node, nil
+		}
+		node = node.next
+	}
+	return nil, fmt.Errorf("Couldn't find %d in list", val)
 }
 
 func (l *LinkedList) delete(val int) error {
-	return nil
+	if l.head == nil {
+		return fmt.Errorf("%d not found in list", val)
+	}
+	if l.head.value == val {
+		l.head = l.head.next
+		return nil
+	}
+	node := l.head
+	for node.next != nil {
+		if node.next.value == val {
+			node.next = node.next.next
+			return nil
+		}
+		node = node.next
+	}
+	return fmt.Errorf("%d not found in list", val)
 }
 
+// View displays all values in the linked list
 func (l *LinkedList) View(w http.ResponseWriter, r *http.Request) {
-	var data []LinkedListData
+	var data []linkedListData
 	node := l.head
 	for node != nil {
-		data = append(data, LinkedListData{fmt.Sprintf("%p", node), fmt.Sprintf("%p", node.next), node.value})
+		data = append(data, linkedListData{fmt.Sprintf("%p", node), fmt.Sprintf("%p", node.next), node.value})
 		node = node.next
 	}
 	view := viewData{"Linked List", data, errors}
@@ -95,6 +120,7 @@ func (l *LinkedList) View(w http.ResponseWriter, r *http.Request) {
 	errors = errors[:0]
 }
 
+// InsertAtFront inserts the form value at the front of the linked list
 func (l *LinkedList) InsertAtFront(w http.ResponseWriter, r *http.Request) {
 	new, err := strconv.Atoi(r.FormValue("new"))
 	if err != nil {
@@ -108,6 +134,7 @@ func (l *LinkedList) InsertAtFront(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
 
+// InsertAtEnd inserts the form value at the end of the linked list
 func (l *LinkedList) InsertAtEnd(w http.ResponseWriter, r *http.Request) {
 	new, err := strconv.Atoi(r.FormValue("new"))
 	if err != nil {
@@ -121,6 +148,7 @@ func (l *LinkedList) InsertAtEnd(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
 
+// DeleteFromFront deletes the first node of the linked list
 func (l *LinkedList) DeleteFromFront(w http.ResponseWriter, r *http.Request) {
 	err := l.deleteFromFront()
 	if err != nil {
@@ -129,10 +157,40 @@ func (l *LinkedList) DeleteFromFront(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
 
+// DeleteFromEnd deletes the last node of the linked list
 func (l *LinkedList) DeleteFromEnd(w http.ResponseWriter, r *http.Request) {
 	err := l.deleteFromEnd()
 	if err != nil {
 		errors = append(errors, fmt.Sprintf("%v", err))
+	}
+	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
+}
+
+func (l *LinkedList) Search(w http.ResponseWriter, r *http.Request) {
+	search, err := strconv.Atoi(r.FormValue("search"))
+	if err != nil {
+		errors = append(errors, fmt.Sprintf("Could not parse form value: %v", err))
+	} else {
+		node, err := l.search(search)
+		if err != nil {
+			errors = append(errors, fmt.Sprintf("%v", err))
+		}
+		if node != nil {
+			errors = append(errors, fmt.Sprintf("%d found at address %p", search, node))
+		}
+	}
+	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
+}
+
+func (l *LinkedList) Delete(w http.ResponseWriter, r *http.Request) {
+	delete, err := strconv.Atoi(r.FormValue("delete"))
+	if err != nil {
+		errors = append(errors, fmt.Sprintf("Could not parse form value: %v", err))
+	} else {
+		err = l.delete(delete)
+		if err != nil {
+			errors = append(errors, fmt.Sprintf("%v", err))
+		}
 	}
 	http.Redirect(w, r, "/linkedlist", http.StatusSeeOther)
 }
