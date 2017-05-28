@@ -1,6 +1,10 @@
 {{ define "viewstack" }}
 {{ template "header" . }}
 
+{{ range .Errors }}
+    {{ . }} <br>
+{{ end }}
+
 <table>
     <caption>{{ .Title }}</caption>
     <tr>
@@ -14,6 +18,12 @@
         </tr>
     {{ end }}
 </table>
-
+<br>
+<form action="/stack/push" method="post">
+    <input type="number" name="new"><button type="submit" value="Push">Push</button>
+</form>
+<form action="/stack/pop" method="post">
+    <button type="submit" value="Pop">Pop</button>
+</form>
 {{ template "footer" . }}
 {{ end }}

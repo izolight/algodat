@@ -18,7 +18,9 @@ func main() {
 	stack.Push(5)
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", Index)
-	r.HandleFunc("/stack", stack.GetAll)
+	r.HandleFunc("/stack", stack.View).Methods("GET")
+	r.HandleFunc("/stack/push", stack.Add).Methods("POST")
+	r.HandleFunc("/stack/pop", stack.Remove).Methods("POST")
 	r.HandleFunc("queue", ViewQueue)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
