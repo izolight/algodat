@@ -13,6 +13,7 @@ var queueTemplates = template.Must(template.ParseFiles("templates/header.html", 
 type Queue struct {
 	size, maxSize int
 	elements      []int
+	messages      []string
 }
 
 type queueData struct {
@@ -22,7 +23,7 @@ type queueData struct {
 
 // NewQueue returns a queue with the specified maxSize
 func NewQueue(maxSize int) *Queue {
-	return &Queue{0, maxSize, nil}
+	return &Queue{0, maxSize, nil, nil}
 }
 
 func (q *Queue) enqueue(val int) error {
@@ -69,27 +70,27 @@ func (q *Queue) View(w http.ResponseWriter, r *http.Request) {
 	data := queueData{q.elements, ""}
 	peek, err := q.peek()
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("%v", err))
+		q.messages = append(q.messages, fmt.Sprintf("%v", err))
 	} else {
 		data.Peek = fmt.Sprintf("%d at position %d", peek, 0)
 	}
-	view := viewData{"Queue", data, errors}
+	view := viewData{"Queue", data, q.messages}
 	err = queueTemplates.ExecuteTemplate(w, "queue", view)
 	if err != nil {
 		fmt.Fprintf(w, "Could not render template: %v", err)
 	}
-	errors = errors[:0]
+	q.messages = q.messages[:0]
 }
 
 // Enqueue takes the form value and enqueues it
 func (q *Queue) Enqueue(w http.ResponseWriter, r *http.Request) {
 	new, err := strconv.Atoi(r.FormValue("new"))
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("Could not parse form value: %v", err))
+		q.messages = append(q.messages, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
 		err = q.enqueue(new)
 		if err != nil {
-			errors = append(errors, fmt.Sprintf("%v", err))
+			q.messages = append(q.messages, fmt.Sprintf("%v", err))
 		}
 	}
 	http.Redirect(w, r, "/queue", http.StatusSeeOther)
@@ -99,7 +100,7 @@ func (q *Queue) Enqueue(w http.ResponseWriter, r *http.Request) {
 func (q *Queue) Dequeue(w http.ResponseWriter, r *http.Request) {
 	err := q.dequeue()
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("%v", err))
+		q.messages = append(q.messages, fmt.Sprintf("%v", err))
 	}
 	http.Redirect(w, r, "/queue", http.StatusSeeOther)
 }

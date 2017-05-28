@@ -13,11 +13,12 @@ var stackTemplates = template.Must(template.ParseFiles("templates/header.html", 
 type Stack struct {
 	size, maxSize int
 	elements      []int
+	messages      []string
 }
 
 // NewStack creates a new stack with the specified maxSize
 func NewStack(maxSize int) *Stack {
-	return &Stack{0, maxSize, nil}
+	return &Stack{0, maxSize, nil, nil}
 }
 
 // Pushes element on the stack
@@ -68,27 +69,27 @@ func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
 	data := queueData{s.elements, ""}
 	peek, err := s.peek()
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("%v", err))
+		s.messages = append(s.messages, fmt.Sprintf("%v", err))
 	} else {
 		data.Peek = fmt.Sprintf("%d at position %d", peek, s.size-1)
 	}
-	view := viewData{"Stack", data, errors}
+	view := viewData{"Stack", data, s.messages}
 	err = stackTemplates.ExecuteTemplate(w, "stack", view)
 	if err != nil {
 		fmt.Fprintf(w, "Could not render template: %v", err)
 	}
-	errors = errors[:0]
+	s.messages = s.messages[:0]
 }
 
 // Push takes a value from a form and pushes it on the stack
 func (s *Stack) Push(w http.ResponseWriter, r *http.Request) {
 	new, err := strconv.Atoi(r.FormValue("new"))
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("Could not parse form value: %v", err))
+		s.messages = append(s.messages, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
 		err = s.push(new)
 		if err != nil {
-			errors = append(errors, fmt.Sprintf("%v", err))
+			s.messages = append(s.messages, fmt.Sprintf("%v", err))
 		}
 	}
 	http.Redirect(w, r, "/stack", http.StatusSeeOther)
@@ -98,7 +99,7 @@ func (s *Stack) Push(w http.ResponseWriter, r *http.Request) {
 func (s *Stack) Pop(w http.ResponseWriter, r *http.Request) {
 	err := s.pop()
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("%v", err))
+		s.messages = append(s.messages, fmt.Sprintf("%v", err))
 	}
 	http.Redirect(w, r, "/stack", http.StatusSeeOther)
 }
