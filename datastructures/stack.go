@@ -7,21 +7,8 @@ import (
 	"strconv"
 )
 
-var templates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/viewstack.html"))
+var stackTemplates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/stack.html"))
 var errors []string
-
-// Stack has the a pointer to the top element in the Stack, the current size and the maximum allowed size
-type Stack struct {
-	top     *element
-	Size    int
-	maxSize int
-}
-
-// element consists of the value and a pointer to the next element in the stack
-type element struct {
-	Value int
-	next  *element
-}
 
 type viewData struct {
 	Title  string
@@ -33,28 +20,41 @@ type stackData struct {
 	Position, Value int
 }
 
+// Stack has the a pointer to the top element in the Stack, the current size and the maximum allowed size
+type Stack struct {
+	top     *stackElement
+	size    int
+	maxSize int
+}
+
+// stackElement consists of the value and a pointer to the next stackElement in the stack
+type stackElement struct {
+	Value int
+	next  *stackElement
+}
+
 // NewStack creates a new stack with the specified maxSize
 func NewStack(maxSize int) *Stack {
 	return &Stack{nil, 0, maxSize}
 }
 
 // Pushes element on the stack
-func (s *Stack) Push(val int) error {
+func (s *Stack) push(val int) error {
 	if s.isFull() {
-		return fmt.Errorf("Can't push to full stack. Size: %d", s.Size)
+		return fmt.Errorf("Can't push to full stack. Size: %d", s.size)
 	}
-	top := element{val, s.top}
+	top := stackElement{val, s.top}
 	s.top = &top
-	s.Size++
+	s.size++
 	return nil
 }
 
 // Pops element from the stack and returns it
-func (s *Stack) Pop() (int, error) {
+func (s *Stack) pop() (int, error) {
 	if !s.isEmpty() {
 		val := s.top.Value
 		s.top = s.top.next
-		s.Size--
+		s.size--
 		return val, nil
 	}
 	return 0, fmt.Errorf("Can't pop from empty stack")
@@ -62,21 +62,21 @@ func (s *Stack) Pop() (int, error) {
 
 // Checks whether the stack is empty
 func (s *Stack) isEmpty() bool {
-	if s.Size > 0 {
+	if s.size > 0 {
 		return false
 	}
 	return true
 }
 
 func (s *Stack) isFull() bool {
-	if s.Size == s.maxSize {
+	if s.size == s.maxSize {
 		return true
 	}
 	return false
 }
 
 // Returns the top element if any
-func (s *Stack) getTop() (*element, error) {
+func (s *Stack) peek() (*stackElement, error) {
 	if s.isEmpty() {
 		return nil, fmt.Errorf("Can't return top of empty stack")
 	}
@@ -84,21 +84,21 @@ func (s *Stack) getTop() (*element, error) {
 }
 
 // Returns the next element if any
-func (e *element) Next() (*element, error) {
+func (e *stackElement) Next() (*stackElement, error) {
 	if e.next != nil {
 		return e.next, nil
 	}
 	return nil, fmt.Errorf("No more nodes")
 }
 
-// GetAll displays all values on the stack
+// View displays all values on the stack
 func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
 	var d []stackData
-	e, err := s.getTop()
+	e, err := s.peek()
 	if err != nil {
 		errors = append(errors, fmt.Sprintf("Could not get top of stack: %v", err))
 	} else {
-		pos := s.Size
+		pos := s.size
 		for {
 			d = append(d, stackData{pos, e.Value})
 			e, err = e.Next()
@@ -109,7 +109,7 @@ func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	data := viewData{"Stack", d, errors}
-	err = templates.ExecuteTemplate(w, "viewstack", data)
+	err = stackTemplates.ExecuteTemplate(w, "viewstack", data)
 	if err != nil {
 		fmt.Fprintf(w, "Could not render template: %v", err)
 	}
@@ -122,7 +122,7 @@ func (s *Stack) Add(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors = append(errors, fmt.Sprintf("Could not parse form value: %v", err))
 	} else {
-		err = s.Push(new)
+		err = s.push(new)
 		if err != nil {
 			errors = append(errors, fmt.Sprintf("Could not push to stack: %v", err))
 		}
@@ -132,7 +132,7 @@ func (s *Stack) Add(w http.ResponseWriter, r *http.Request) {
 
 // Remove pops the top value from the stack
 func (s *Stack) Remove(w http.ResponseWriter, r *http.Request) {
-	_, err := s.Pop()
+	_, err := s.pop()
 	if err != nil {
 		errors = append(errors, fmt.Sprintf("Could not pop from stack: %v", err))
 	}
