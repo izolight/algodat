@@ -33,7 +33,7 @@ func main() {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	ds := []string{"stack", "queue"}
+	ds := []string{"stack", "queue", "linkedlist"}
 	for _, d := range ds {
 		fmt.Fprintf(w, "<a href='/%s'>%s</a><br>", d, d)
 	}

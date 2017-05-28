@@ -16,6 +16,11 @@ type Stack struct {
 	messages      []string
 }
 
+type stackData struct {
+	Elements []int
+	Peek     string
+}
+
 // NewStack creates a new stack with the specified maxSize
 func NewStack(maxSize int) *Stack {
 	return &Stack{0, maxSize, nil, nil}
@@ -66,7 +71,7 @@ func (s *Stack) peek() (int, error) {
 
 // View displays all values on the stack
 func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
-	data := queueData{s.elements, ""}
+	data := stackData{s.elements, ""}
 	peek, err := s.peek()
 	if err != nil {
 		s.messages = append(s.messages, fmt.Sprintf("%v", err))
