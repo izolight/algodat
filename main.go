@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"gitea.izolight.xyz/gabor/algodat/datastructures"
 	"github.com/gorilla/mux"
+	"github.com/urfave/negroni"
 )
 
 var stack = datastructures.NewStack(10)
@@ -29,7 +29,12 @@ func main() {
 	r.HandleFunc("/linkedlist/deleteFromEnd", linkedList.DeleteFromEnd).Methods("POST")
 	r.HandleFunc("/linkedlist/search", linkedList.Search).Methods("POST")
 	r.HandleFunc("/linkedlist/delete", linkedList.Delete).Methods("POST")
-	log.Fatal(http.ListenAndServe(":8080", r))
+
+	n := negroni.New()
+	n.Use(negroni.NewLogger())
+	n.UseHandler(r)
+
+	http.ListenAndServe(":8080", n)
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
