@@ -73,18 +73,68 @@ func TestEmptyLinkedList(t *testing.T) {
 	l := NewLinkedList()
 	head, err := l.Head()
 	if err == nil {
-		t.Errorf("Expected empty queue, got %v", head)
+		t.Errorf("Expected empty list, got %v", head)
 	}
 	tail, err := l.Tail()
 	if err == nil {
-		t.Errorf("Expected empty queue, got %v", tail)
+		t.Errorf("Expected empty list, got %v", tail)
 	}
 	removedHead, err := l.DeleteFromFront()
 	if err == nil {
-		t.Errorf("Expected empty queue, got %v", removedHead)
+		t.Errorf("Expected empty list, got %v", removedHead)
 	}
 	removedTail, err := l.DeleteFromEnd()
 	if err == nil {
-		t.Errorf("Expected empty queue, got %v", removedTail)
+		t.Errorf("Expected empty list, got %v", removedTail)
+	}
+	deleted, err := l.Delete(IntTest(1))
+	if err == nil {
+		t.Errorf("Expected empty list, got %v", deleted)
+	}
+
+}
+
+func TestSearchAndDeleteLinkedList(t *testing.T) {
+	l := NewLinkedList()
+	var val = []IntTest{1, 2, 3, 4, 5}
+	for i := range val {
+		err := l.InsertAtFront(IntTest(val[i]))
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+	search, err := l.Search(val[1])
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+	if search.data != val[1] {
+		t.Errorf("Expected %v, got %v", val[1], search.data)
+	}
+	deleted, err := l.Delete(val[2])
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+	if deleted.data != val[2] {
+		t.Errorf("Expected %v, got %v", val[1], deleted.data)
+	}
+	if l.Size() != len(val)-1 {
+		t.Errorf("Expected size %v, got %v", len(val)-1, l.Size())
+	}
+	// this is the front element so it triggers a different codepath
+	deleted, err = l.Delete(val[len(val)-1])
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+	if deleted.data != val[len(val)-1] {
+		t.Errorf("Expected %v, got %v", val[len(val)-1], deleted.data)
+	}
+	// try to delete deleted element
+	deleted, err = l.Delete(val[2])
+	if err == nil {
+		t.Errorf("Expected not found, got %v", deleted)
+	}
+	search, err = l.Search(val[2])
+	if err == nil {
+		t.Errorf("Expected not found, got %v", search)
 	}
 }

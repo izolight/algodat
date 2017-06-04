@@ -30,10 +30,11 @@ func (l *LinkedList) Size() int {
 	return l.size
 }
 
-func (l *LinkedList) Elements() []fmt.Stringer {
+// Elements returns all elements in the list
+/*func (l *LinkedList) Elements() []fmt.Stringer {
 	// TODO
 	return nil
-}
+}*/
 
 // Head returns the first element in the list
 func (l *LinkedList) Head() (fmt.Stringer, error) {
@@ -135,15 +136,14 @@ func (l *LinkedList) Delete(val fmt.Stringer) (*Node, error) {
 		return nil, fmt.Errorf("Can't find %d in list", val)
 	}
 	if l.head.data == val {
-		deleted := l.head
-		l.head = l.head.next
-		return deleted, nil
+		return l.DeleteFromFront()
 	}
 	node := l.head
 	for node.next != nil {
 		if node.next.data == val {
 			deleted := node.next
 			node.next = node.next.next
+			l.size--
 			return deleted, nil
 		}
 		node = node.next
