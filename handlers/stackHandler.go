@@ -1,10 +1,7 @@
 package handlers
 
 import (
-	"fmt"
 	"html/template"
-	"net/http"
-	"strconv"
 
 	"github.com/izolight/algodat/datastructures"
 )
@@ -19,7 +16,7 @@ type StackModel struct {
 }
 
 // View displays all values on the stack
-func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
+/*func (s *Stack) View(w http.ResponseWriter, r *http.Request) {
 	data := stackData{s.elements, ""}
 	peek, err := s.peek()
 	if err != nil {
@@ -62,3 +59,4 @@ func (s *Stack) Pop(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, "/stack", http.StatusSeeOther)
 }
+*/
