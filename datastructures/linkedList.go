@@ -72,16 +72,15 @@ func (l *LinkedList) InsertAtFront(val fmt.Stringer) error {
 
 // InsertAtEnd adds an element after the tail
 func (l *LinkedList) InsertAtEnd(val fmt.Stringer) error {
-	node := Node{val, nil}
 	if l.head == nil {
 		return l.InsertAtFront(val)
 	}
-	previous, current := l.head, l.head
-	for current != nil {
-		previous = current
-		current = current.next
+	node := Node{val, nil}
+	tmp := l.head
+	for tmp.next != nil {
+		tmp = tmp.next
 	}
-	previous.next = &node
+	tmp.next = &node
 	l.tail = &node
 	l.size++
 	return nil
