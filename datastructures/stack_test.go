@@ -55,7 +55,7 @@ func TestRemoveFromStack(t *testing.T) {
 	s.Pop()
 	s.Pop()
 	if !s.Empty() {
-		t.Errorf("Expected empty stack: %v, size %v", 1, s.Size())
+		t.Errorf("Expected empty stack, size %v", s.Size())
 	}
 }
 
@@ -65,7 +65,6 @@ func TestEmptyStack(t *testing.T) {
 	if err == nil {
 		t.Errorf("Expected empty stack, got %v", top)
 	}
-	err = nil
 	popped, err := s.Pop()
 	if err == nil {
 		t.Errorf("Expected empty stack, got %v", popped)

@@ -25,6 +25,7 @@ func (l *LinkedList) Empty() bool {
 	return true
 }
 
+// Size returns the current size of the linked list
 func (l *LinkedList) Size() int {
 	return l.size
 }
@@ -64,11 +65,12 @@ func (l *LinkedList) InsertAtFront(val fmt.Stringer) error {
 		l.tail = l.head
 	}
 	l.head = &node
+	l.size++
 	return nil
 }
 
 // InsertAtEnd adds an element after the tail
-func (l *LinkedList) insertAtEnd(val fmt.Stringer) error {
+func (l *LinkedList) InsertAtEnd(val fmt.Stringer) error {
 	node := Node{val, nil}
 	if l.head == nil {
 		return l.InsertAtFront(val)
@@ -80,22 +82,27 @@ func (l *LinkedList) insertAtEnd(val fmt.Stringer) error {
 	}
 	previous.next = &node
 	l.tail = &node
+	l.size++
 	return nil
 }
 
-func (l *LinkedList) deleteFromFront() (*Node, error) {
+// DeleteFromFront removes and returns the first element
+func (l *LinkedList) DeleteFromFront() (*Node, error) {
 	if l.head == nil {
 		return nil, fmt.Errorf("Can't delete from empty list")
 	}
 	deleted := l.head
 	l.head = l.head.next
+	l.size--
 	return deleted, nil
 }
 
-func (l *LinkedList) deleteFromEnd() (*Node, error) {
+// DeleteFromEnd removes and returns the last element
+func (l *LinkedList) DeleteFromEnd() (*Node, error) {
 	if l.head == nil {
 		return nil, fmt.Errorf("Can't delete from empty list")
 	}
+	l.size--
 	if l.head.next == nil {
 		deleted := l.head
 		l.head = nil
@@ -110,7 +117,8 @@ func (l *LinkedList) deleteFromEnd() (*Node, error) {
 	return deleted, nil
 }
 
-func (l *LinkedList) search(val fmt.Stringer) (*Node, error) {
+// Search searches for a value in the list and returns the first it finds
+func (l *LinkedList) Search(val fmt.Stringer) (*Node, error) {
 	node := l.head
 	for node != nil {
 		if node.data == val {
@@ -121,7 +129,8 @@ func (l *LinkedList) search(val fmt.Stringer) (*Node, error) {
 	return nil, fmt.Errorf("Can't find %d in list", val)
 }
 
-func (l *LinkedList) delete(val fmt.Stringer) (*Node, error) {
+// Delete searches for a value in the list and deletes the first it finds
+func (l *LinkedList) Delete(val fmt.Stringer) (*Node, error) {
 	if l.head == nil {
 		return nil, fmt.Errorf("Can't find %d in list", val)
 	}

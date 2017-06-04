@@ -63,7 +63,6 @@ func TestEmptyQueue(t *testing.T) {
 	if err == nil {
 		t.Errorf("Expected empty queue, got %v", front)
 	}
-	err = nil
 	dequeued, err := q.Dequeue()
 	if err == nil {
 		t.Errorf("Expected empty queue, got %v", dequeued)
