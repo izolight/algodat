@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"gitea.izolight.xyz/gabor/algodat/datastructures"
+	"gitea.izolight.xyz/gabor/algodat.git/datastructures"
 )
 
 var stackTemplates = template.Must(template.ParseFiles("templates/header.html", "templates/footer.html", "templates/stack.html"))
