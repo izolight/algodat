@@ -37,6 +37,7 @@ func main() {
 	http.ListenAndServe(":8080", n)
 }
 
+// Index Shows the index page with all the datastructures
 func Index(w http.ResponseWriter, r *http.Request) {
 	ds := []string{"stack", "queue", "linkedlist"}
 	for _, d := range ds {
