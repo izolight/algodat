@@ -16,7 +16,7 @@ var linkedList = datastructures.NewLinkedList()
 func main() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", Index)
-	r.HandleFunc("/stack", stack.View).Methods("GET")
+	/*r.HandleFunc("/stack", stack.View).Methods("GET")
 	r.HandleFunc("/stack/push", stack.Push).Methods("POST")
 	r.HandleFunc("/stack/pop", stack.Pop).Methods("POST")
 	r.HandleFunc("/queue", queue.View).Methods("GET")
@@ -28,7 +28,7 @@ func main() {
 	r.HandleFunc("/linkedlist/deleteFromFront", linkedList.DeleteFromFront).Methods("POST")
 	r.HandleFunc("/linkedlist/deleteFromEnd", linkedList.DeleteFromEnd).Methods("POST")
 	r.HandleFunc("/linkedlist/search", linkedList.Search).Methods("POST")
-	r.HandleFunc("/linkedlist/delete", linkedList.Delete).Methods("POST")
+	r.HandleFunc("/linkedlist/delete", linkedList.Delete).Methods("POST")*/
 
 	n := negroni.New()
 	n.Use(negroni.NewLogger())
