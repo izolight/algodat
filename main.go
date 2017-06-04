@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitea.izolight.xyz/gabor/algodat.git/datastructures"
 	"github.com/gorilla/mux"
+	"github.com/izolight/algodat/datastructures"
 	"github.com/urfave/negroni"
 )
 
