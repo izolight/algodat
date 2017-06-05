@@ -118,6 +118,15 @@ func (l *DoublyLinkedList) DeleteFromEnd() (*DoublyLinkedListNode, error) {
 
 // InsertAfter adds an element after the found value
 func (l *DoublyLinkedList) InsertAfter(val fmt.Stringer, search fmt.Stringer) error {
+	node, err := l.Search(search)
+	if err != nil {
+		return err
+	}
+	new := DoublyLinkedListNode{val, node, node.next}
+	node.next = &new
+	if node == l.tail {
+		l.tail = &new
+	}
 	return nil
 }
 

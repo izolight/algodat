@@ -107,6 +107,20 @@ func TestSearchAndDeleteDoublyLinkedList(t *testing.T) {
 	if search.data != val[1] {
 		t.Errorf("Expected %v, got %v", val[1], search.data)
 	}
+	search, err = l.Search(val[0])
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+	if search.data != val[0] {
+		t.Errorf("Expected %v, got %v", val[0], search.data)
+	}
+	search, err = l.Search(val[4])
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+	if search.data != val[4] {
+		t.Errorf("Expected %v, got %v", val[4], search.data)
+	}
 	deleted, err := l.Delete(val[2])
 	if err != nil {
 		t.Errorf("%v", err)
@@ -133,5 +147,20 @@ func TestSearchAndDeleteDoublyLinkedList(t *testing.T) {
 	search, err = l.Search(val[2])
 	if err == nil {
 		t.Errorf("Expected not found, got %v", search)
+	}
+	// deleted element is tail
+	deleted, err = l.Delete(val[0])
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+	if deleted.data != val[0] {
+		t.Errorf("Expected %v, got %v", val[0], deleted.data)
+	}
+	l.DeleteFromEnd()
+	l.DeleteFromEnd()
+	l.DeleteFromEnd()
+	deleted, err = l.Delete(val[0])
+	if err == nil {
+		t.Errorf("Expected not found, got %v", deleted)
 	}
 }
